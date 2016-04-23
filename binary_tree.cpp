@@ -43,14 +43,13 @@ void binary_tree::insert(int value)
     node* t = new node;
     node* parent;
     t->data = value;
-    t->left = NULL;
-    t->right = NULL;
-    parent = NULL;
-    // is this a new tree?
-    if(tree==nullptr) 
+    t->left = nullptr;
+    t->right = nullptr;
+    parent = nullptr;
+    // tree is empty
+    if(tree == nullptr) 
         tree = t;
     else {
-        //Note: ALL insertions are as leaf nodes
         node* curr;
         curr = tree;
         // Find the Node's parent
@@ -70,7 +69,6 @@ void binary_tree::insert(int value)
 void binary_tree::remove(int value) {
     node* curr;
     node *prev = new node;
-    //node *next = new node;
     curr = tree;
     while(curr) {
         if(value > curr->data) {
@@ -101,7 +99,7 @@ void binary_tree::remove(int value) {
                     curr = nullptr;                    
                 }
             } else if(curr->left == nullptr && curr->right != nullptr) { // the node has a node attached to its right
-                if(prev->left==curr) {                  //not relevant for tests.cpp (?) but should be included as a case
+                if(prev->left==curr) {                                   //not relevant for tests.cpp (?) but should be included as a case
                     prev->left=curr->right;
                     delete curr;
                     curr=nullptr;                    
@@ -116,9 +114,7 @@ void binary_tree::remove(int value) {
                     curr=check;
                     delete check;
                     curr->right=nullptr;                           
-                } else {// Right child has children                        
-                    // If the node's right child has a left child
-                    // Move all the way down left to locate smallest element
+                } else {// righ branch has nodes attached to itself                     
                     if((curr->right)->left!=nullptr) {
                         node* leftcurr;
                         node* leftcurrPrev;
@@ -146,21 +142,21 @@ void binary_tree::remove(int value) {
 // Checks if a value is in the tree
 bool binary_tree::exists(int value) const
 {
-    if(tree == nullptr)
+    if(tree == nullptr) // if tree is empty return false
         return false;
-    else {
+    else { //tree has elements, find value in it
         node* curr;
         curr = tree;
         while(curr) {
-            if(value > curr->data) 
-                curr = curr->right;
-            else if(value < curr->data) 
+            if(value > curr->data) //value greater than node's value, go right
+                curr = curr->right; 
+            else if(value < curr->data) //value lower than node's value, go left
                 curr = curr->left;
-            else if(value == curr->data) 
+            else if(value == curr->data) //value was found in tree
                 return true;
-            }
         }
-    return false;
+    }
+    return false; //value was not found in tree, return false
 }
 
 // Prints the tree to standard out in numerical order
@@ -177,28 +173,24 @@ std::string binary_tree::inorder() const
     while(current != nullptr) {                 
         if(current->left == nullptr){
             str += to_string(current->data) + " ";
-            //cout << str << endl;
             current = current->right;      
         } else {
-            /* Find the inorder predecessor of current */
             pre = current->left;
             while(pre->right != nullptr && pre->right != current)
                 pre = pre->right;
      
-            /* Make current as right child of its inorder predecessor */
             if(pre->right == nullptr) {
                 pre->right = current;
                 current = current->left;
             } else {
                 pre->right = nullptr;
                 str += to_string(current->data) + " ";
-                //cout << str << endl;
                 current = current->right;      
             } 
         }
     } 
-        string result = str.substr(0, str.size()-1);
-        return str;
+    string result = str.substr(0, str.size()-1);
+    return str;
 }
 
 // Prints the tree in pre-order
