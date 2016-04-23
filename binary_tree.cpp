@@ -86,7 +86,21 @@ void binary_tree::remove(int value)
 // Checks if a value is in the tree
 bool binary_tree::exists(int value) const
 {
-    return true;
+    if(tree == nullptr)
+        return false;
+    else {
+        node* curr;
+        curr = tree;
+        while(curr) {
+            if(value > curr->data) 
+                curr = curr->right;
+            else if(value < curr->data) 
+                curr = curr->left;
+            else if(value == curr->data) 
+                return true;
+            }
+        }
+    return false;
 }
 
 // Prints the tree to standard out in numerical order
