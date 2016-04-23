@@ -40,7 +40,30 @@ binary_tree::~binary_tree()
 // Adds a value to the tree
 void binary_tree::insert(int value)
 {
-
+    node* t = new node;
+    node* parent;
+    t->data = value;
+    t->left = NULL;
+    t->right = NULL;
+    parent = NULL;
+    // is this a new tree?
+    if(tree==nullptr) 
+        tree = t;
+    else {
+        //Note: ALL insertions are as leaf nodes
+        node* curr;
+        curr = tree;
+        // Find the Node's parent
+        while(curr) {
+            parent = curr;
+            if(t->data > curr->data) curr = curr->right;
+            else curr = curr->left;
+        }
+        if(t->data < parent->data) 
+            parent->left = t;            
+        else
+            parent->right = t;
+    }
 }
 
 // Removes a value from the tree
@@ -79,7 +102,7 @@ std::string binary_tree::inorder() const
     current = tree;
     while(current != nullptr) {                 
         if(current->left == nullptr){
-            str += to_string(current->data);
+            str += to_string(current->data) + " ";
             //cout << str << endl;
             current = current->right;      
         } else {
@@ -94,14 +117,13 @@ std::string binary_tree::inorder() const
                 current = current->left;
             } else {
                 pre->right = nullptr;
-                //str += to_string(current->data);
+                str += to_string(current->data) + " ";
                 //cout << str << endl;
                 current = current->right;      
             } 
         }
     } 
-
-        //cout << str << endl;
+        string result = str.substr(0, str.size()-1);
         return str;
 }
 
