@@ -1,5 +1,3 @@
-Progress:
-
 Test 1 passed (basic constructor)
 Test 2 passed (single value constructor)
 Test 3 passed (vector constructor)
