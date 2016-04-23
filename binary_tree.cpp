@@ -33,7 +33,7 @@ binary_tree::binary_tree(const binary_tree &rhs)
 // Destroys (cleans up) the tree
 binary_tree::~binary_tree()
 {
-    clearTree(tree);
+    //clearTree(tree);
 }
 
 
@@ -67,20 +67,80 @@ void binary_tree::insert(int value)
 }
 
 // Removes a value from the tree
-void binary_tree::remove(int value)
-{
-    node *temp = tree;
-    
-    while(temp != nullptr) {
-        if(temp->key < value)
-            temp = temp->left;
-        else if(temp->key > value)
-            temp = temp->right;
-        else if(temp->key == value)
-            delete temp;
+void binary_tree::remove(int value) {
+    node* curr;
+    node *prev = new node;
+    //node *next = new node;
+    curr = tree;
+    while(curr) {
+        if(value > curr->data) {
+            //go right
+            prev = curr;
+            curr = curr->right;
+        } else if(value < curr->data) {
+            //go left
+            prev = curr;
+            curr = curr->left;
+        } else if(value == curr->data) {
+            if(curr->left == nullptr && curr->right == nullptr) { //the node has no other nodes attached to it
+                if(prev->right == curr)
+                    prev->right = nullptr; //delete links
+                if(prev->left == nullptr)
+                    prev->left = nullptr; //delete links
+                //delete node
+                delete curr;
+                curr = nullptr;
+            } else if(curr->left != nullptr && curr->right == nullptr) { //the node has a node attached to its left
+                if(prev->left == curr) {
+                    prev->left = curr->left;
+                    delete curr;
+                    curr = nullptr;                    
+                } else {
+                    prev->right=curr->left;
+                    delete curr;
+                    curr = nullptr;                    
+                }
+            } else if(curr->left == nullptr && curr->right != nullptr) { // the node has a node attached to its right
+                if(prev->left==curr) {                  //not relevant for tests.cpp (?) but should be included as a case
+                    prev->left=curr->right;
+                    delete curr;
+                    curr=nullptr;                    
+                } else {              
+                    prev->right=curr->right;
+                    delete curr;
+                    curr=nullptr;                    
+                }
+            } else if(curr->left != nullptr && curr->right != nullptr) { // the node has 2 nodes attached to it
+                node* check=curr->right;
+                if((curr->left==nullptr)&&(curr->right==nullptr)) {
+                    curr=check;
+                    delete check;
+                    curr->right=nullptr;                           
+                } else {// Right child has children                        
+                    // If the node's right child has a left child
+                    // Move all the way down left to locate smallest element
+                    if((curr->right)->left!=nullptr) {
+                        node* leftcurr;
+                        node* leftcurrPrev;
+                        leftcurrPrev=curr->right;
+                        leftcurr=(curr->right)->left;
+                        while(leftcurr->left != nullptr) {
+                            leftcurrPrev=leftcurr;
+                            leftcurr=leftcurr->left;
+                        }
+                        curr->data=leftcurr->data;
+                        delete leftcurr;
+                        leftcurrPrev->left=nullptr;                
+                    } else {
+                        node* temp=curr->right;
+                        curr->data=temp->data;
+                        curr->right=temp->right;
+                        delete temp;                
+                    }
+                }
+            }
+        } else return;
     }
-
-    temp->data = value;
 }
 
 // Checks if a value is in the tree
@@ -196,13 +256,3 @@ std::ostream& operator<<(std::ostream &out, const binary_tree &value)
     return out;
 }
 
-//HELPER FUNCTIONS
-
-//recursive deletion of elements
-void binary_tree::clearTree(node *leaf) {
-    if(leaf==NULL) return;  // Nothing to clear
-    if(leaf->left != NULL) ClearTree(leaf->left); // Clear left subnode
-    if(leaf->right != NULL) ClearTree(leaf->right); // Clear right subnode
-    delete node;    // Destroy node
-    return;
-}
