@@ -196,7 +196,46 @@ std::string binary_tree::inorder() const
 // Prints the tree in pre-order
 std::string binary_tree::preorder() const
 {
-    return std::string("");
+    node *curr = new node;
+    node *prev = new node;
+    node *next = new node;
+    string str = "";
+    node *stack[50];
+    int pos = 0;
+    int pop = 0;
+     
+    if(tree == nullptr)
+        return string(""); 
+     
+    curr = tree;
+    while(curr != nullptr) {                 
+        if(curr->left != nullptr && curr->right != nullptr) { //node attached to the left and right
+            str += to_string(curr->data) + " ";
+            stack[pos] = new node;
+            stack[pos] = curr->right;            
+            curr = curr->left;            
+            pos++;                     
+        } else if(curr->left != nullptr && curr->right == nullptr) { //node attached to the left
+            str += to_string(curr->data) + " ";
+            curr = curr->left;
+       } else if(curr->left == nullptr && curr->right != nullptr) { //node attached to the right
+            str += to_string(curr->data) + " ";
+            curr = curr->right;
+        } else if(curr->left == nullptr && curr->right == nullptr) { //no nodes attached, go to 'next'
+            str += to_string(curr->data) + " ";
+            if(pop < pos) {
+                curr = stack[pop];
+                pop++;                              
+            } else break;
+        }       
+    }
+    
+    for (int i = 0; i < pos; i++) {
+        delete stack[i];
+        stack[i] = nullptr;
+    }
+    string result = str.substr(0, str.size()-1);    
+    return result;
 }
 
 // Prints the tree in post-order
